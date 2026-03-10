@@ -1,36 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getNeoDBConfig, saveNeoDBConfig, type NeoDBConfig } from "@/lib/neodb-config";
+import { useState } from "react";
 import { useAdminFetch } from "@/components/admin-auth-provider";
 
 export default function SettingsPage() {
-  const [config, setConfig] = useState<NeoDBConfig>(getNeoDBConfig());
-  const [token, setToken] = useState(config.token || "");
-  const [saved, setSaved] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<{ imported: number; skipped: number } | null>(null);
   const adminFetch = useAdminFetch();
 
-  useEffect(() => {
-    const currentConfig = getNeoDBConfig();
-    setConfig(currentConfig);
-    setToken(currentConfig.token || "");
-  }, []);
-
-  const runSync = async (neoToken: string) => {
+  const runSync = async () => {
     setSyncError(null);
     setSyncResult(null);
-    if (!neoToken) return;
 
     setSyncing(true);
     try {
       const response = await adminFetch("/api/neodb/import", {
         method: "POST",
-        headers: {
-          "x-neodb-token": neoToken,
-        },
       });
       const data = (await response.json()) as {
         imported?: number;
@@ -51,31 +37,6 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSave = async () => {
-    const trimmedToken = token.trim();
-    try {
-      const verify = await adminFetch("/api/admin/verify", { method: "POST" });
-      const data = await verify.json().catch(() => ({}));
-      if (!verify.ok) {
-        throw new Error(data.error || "需要管理员密码");
-      }
-    } catch (error) {
-      setSyncError(error instanceof Error ? error.message : "需要管理员密码");
-      return;
-    }
-
-    const newConfig: NeoDBConfig = {
-      token: trimmedToken,
-    };
-    saveNeoDBConfig(newConfig);
-    setConfig(newConfig);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-
-    if (!trimmedToken) return;
-    await runSync(trimmedToken);
-  };
-
   return (
     <div className="stagger-in">
       {/* Terminal Header */}
@@ -86,47 +47,22 @@ export default function SettingsPage() {
           <span className="text-[#9a958f] text-sm">configuration</span>
         </div>
         <p className="text-[#9a958f] text-sm font-[var(--font-mono)]">
-          neo_api_token={token ? "***" : "null"}<span className="term-cursor" />
+          neo_api_token=env<span className="term-cursor" />
         </p>
       </header>
 
       <div className="space-y-4">
-        {/* NeoDB Configuration */}
+        {/* NeoDB Sync */}
         <div className="term-card">
           <h2 className="font-[var(--font-terminal)] text-[#1a1915] text-sm mb-4 flex items-center gap-2">
             <span className="text-[#00a86b]">&gt;</span>
-            NEODB_API_CONFIG
+            NEODB_SYNC
           </h2>
 
           <div className="space-y-4">
-            {/* Token Input */}
-            <div>
-              <label className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
-                $ export NEODB_TOKEN=
-              </label>
-              <input
-                type="password"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                onCopy={(e) => e.preventDefault()}
-                placeholder="your_token_here"
-                className="term-input font-[var(--font-mono)] text-sm"
-              />
-              <p className="text-[10px] text-[#9a958f] mt-2 font-[var(--font-mono)]">
-                # Get token: neodb.social → Settings → Authorized Apps → Generate Token (Full Access)
-              </p>
-            </div>
-
-            {/* Save Button */}
             <button
-              onClick={handleSave}
-              className="term-btn w-full glitch-hover"
-            >
-              <span>{syncing ? "[~] SYNCING_NEODB" : saved ? "[✓] SAVED" : "[>] SAVE_CONFIG"}</span>
-            </button>
-            <button
-              onClick={() => runSync(token.trim())}
-              disabled={!token.trim() || syncing}
+              onClick={runSync}
+              disabled={syncing}
               className="term-btn w-full glitch-hover disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span>{syncing ? "[~] SYNCING_NEODB" : "[>] SYNC_NEODB_NOW"}</span>
@@ -160,20 +96,12 @@ export default function SettingsPage() {
               <span className="text-[#00a86b]">"ONLINE"</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#6b6560]">auth_status:</span>
-              <span className={token ? "text-[#00a86b]" : "text-[#d48806]"}>
-                {token ? "\"CONFIGURED\"" : "\"NOT_SET\""}
-              </span>
+              <span className="text-[#6b6560]">token_source:</span>
+              <span className="text-[#1a1915]">"ENVIRONMENT"</span>
             </div>
             <div className="flex justify-between">
               <span className="text-[#6b6560]">sync_enabled:</span>
-              <span className={token ? "text-[#00a86b]" : "text-[#9a958f]"}>
-                {token ? "\"TRUE\"" : "\"FALSE\""}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-[#6b6560]">local_storage:</span>
-              <span className="text-[#1a1915]">"ENABLED"</span>
+              <span className="text-[#00a86b]">"TRUE"</span>
             </div>
           </div>
         </div>
@@ -195,8 +123,8 @@ export default function SettingsPage() {
               <p>• 状态: 自动映射 (planned→wishlist, completed→complete)</p>
               <p>• 评分: 同步到 NeoDB</p>
             </div>
-            <p className="text-[#d48806]">
-              ! Token 需要 Full Access 权限才能同步数据
+            <p className="text-[#00a86b]">
+              Token 已通过环境变量 NEODB_TOKEN 配置
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { searchNeoDB, basicSearch } from "@/lib/providers/neodb-search";
 import { logError } from "@/lib/logger";
 import { requireAdminPassword } from "@/lib/admin-auth-server";
 import { isNeoDBTimeout } from "@/lib/neodb-timeout";
+import { getNeoDBToken } from "@/lib/neodb-token";
 
 export const runtime = "nodejs";
 
@@ -26,7 +27,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q")?.trim();
   const type = searchParams.get("type") as MediaType | null;
-  const token = searchParams.get("token")?.trim() || undefined;
+  const token = getNeoDBToken();
   const allowed = ["book", "film", "series", "game"];
 
   if (!query) {
@@ -38,7 +39,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const results = await searchNeoDB(type ?? undefined, query, token);
+    const results = await searchNeoDB(type ?? undefined, query, token || undefined);
     const limitedResults = results.slice(0, 3);
 
     return NextResponse.json({ results: limitedResults });

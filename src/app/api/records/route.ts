@@ -4,6 +4,7 @@ import type { MediaType, ProgressUnit, RecordStatus } from "@/lib/data";
 import { syncToNeoDB } from "@/lib/providers/neodb-sync";
 import { logError } from "@/lib/logger";
 import { requireAdminPassword } from "@/lib/admin-auth-server";
+import { getNeoDBToken } from "@/lib/neodb-token";
 
 export const runtime = "nodejs";
 
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
     const neodbId = body.sourceIds?.neodb;
     if (neodbId) {
       try {
-        const token = request.headers.get("x-neodb-token") || "";
+        const token = getNeoDBToken();
         if (token) {
           const syncResult = await syncToNeoDB(
             {

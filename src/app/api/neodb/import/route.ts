@@ -3,6 +3,7 @@ import { importFromNeoDB } from "@/lib/providers/neodb-import";
 import { logError } from "@/lib/logger";
 import { requireAdminPassword } from "@/lib/admin-auth-server";
 import { isNeoDBTimeout } from "@/lib/neodb-timeout";
+import { getNeoDBToken } from "@/lib/neodb-token";
 
 export const runtime = "nodejs";
 
@@ -14,10 +15,10 @@ export async function POST(request: Request) {
       { status: auth.status }
     );
   }
-  const token = request.headers.get("x-neodb-token")?.trim() || "";
+  const token = getNeoDBToken();
   if (!token) {
     return NextResponse.json(
-      { error: "Missing NeoDB token." },
+      { error: "Missing NeoDB token. Set NEODB_TOKEN environment variable or provide via header." },
       { status: 400 }
     );
   }

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { RecordStatus } from "@/lib/data";
 import { statusLabels } from "@/lib/labels";
-import { getNeoDBToken } from "@/lib/neodb-config";
 import StarRating from "@/components/star-rating";
 import { useAdminFetch } from "@/components/admin-auth-provider";
 
@@ -57,9 +56,8 @@ export default function NewRecordPage() {
     setSearchResults([]);
 
     try {
-      const token = getNeoDBToken();
       const response = await adminFetch(
-        `/api/search?q=${encodeURIComponent(form.title)}&token=${encodeURIComponent(token)}`
+        `/api/search?q=${encodeURIComponent(form.title)}`
       );
       if (!response.ok) {
         throw new Error("SEARCH_FAILED");
@@ -90,12 +88,10 @@ export default function NewRecordPage() {
     setSaving(true);
     setSearchError(null);
     try {
-      const token = getNeoDBToken();
       const response = await adminFetch("/api/records", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { "x-neodb-token": token }),
         },
         body: JSON.stringify(payloadFromResult(target)),
       });
