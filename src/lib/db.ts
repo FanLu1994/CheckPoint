@@ -160,6 +160,19 @@ const ensureDatabase = async (): Promise<DatabaseConnection> => {
 
     pgDb.exec(getCreateTableSQL());
 
+    // Auto-migrate: check and add missing columns
+    const columnsResult = await pgDb.query(
+      "SELECT column_name FROM information_schema.columns WHERE table_name = 'records'"
+    ) as { column_name: string }[];
+    const columnNames = new Set(columnsResult.map((col) => col.column_name));
+
+    if (!columnNames.has("cover_url")) {
+      await pgDb.exec("ALTER TABLE records ADD COLUMN cover_url TEXT");
+    }
+    if (!columnNames.has("source_ids")) {
+      await pgDb.exec("ALTER TABLE records ADD COLUMN source_ids TEXT");
+    }
+
     const countResult = (await pgDb.queryOne(
       "SELECT COUNT(*) as count FROM records"
     )) as { count: string };
