@@ -9,6 +9,7 @@ import StarRating from "@/components/star-rating";
 import { useAdminFetch } from "@/components/admin-auth-provider";
 import ItemDeleteButton from "@/components/item-delete-button";
 import { Pencil, Copy, Check } from "lucide-react";
+import { getNeoDBToken } from "@/lib/neodb-config";
 
 const STATUS_OPTIONS: RecordStatus[] = [
   "planned",
@@ -55,9 +56,13 @@ export default function ItemProgressUpdate({
 
     setIsSaving(true);
     try {
+      const token = getNeoDBToken();
       const response = await adminFetch(`/api/records/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { "x-neodb-token": token }),
+        },
         body: JSON.stringify({
           status: nextStatus,
           rating: ratingValue,

@@ -32,6 +32,7 @@ export interface RecordItem {
   tags: string[];
   notes?: string;
   progress?: Progress;
+  sourceIds?: Record<string, string>;
   startedAt?: string;
   completedAt?: string;
   createdAt: string;

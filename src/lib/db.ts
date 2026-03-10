@@ -135,6 +135,7 @@ const getCreateTableSQL = () => `
     progress_current INTEGER,
     progress_total INTEGER,
     progress_unit TEXT,
+    source_ids TEXT,
     started_at TEXT,
     completed_at TEXT,
     created_at TEXT NOT NULL,
@@ -209,6 +210,9 @@ const ensureDatabase = async (): Promise<DatabaseConnection> => {
     const columnNames = new Set(columns.map((column) => column.name));
     if (!columnNames.has("cover_url")) {
       sqliteDb.exec("ALTER TABLE records ADD COLUMN cover_url TEXT");
+    }
+    if (!columnNames.has("source_ids")) {
+      sqliteDb.exec("ALTER TABLE records ADD COLUMN source_ids TEXT");
     }
 
     const needsMigration = sqliteDb
@@ -305,6 +309,7 @@ const serializeRecord = (record: RecordItem) => ({
   progress_current: record.progress?.current ?? null,
   progress_total: record.progress?.total ?? null,
   progress_unit: record.progress?.unit ?? null,
+  source_ids: record.sourceIds ? JSON.stringify(record.sourceIds) : null,
   started_at: record.startedAt ?? null,
   completed_at: record.completedAt ?? null,
   created_at: record.createdAt,
@@ -337,6 +342,7 @@ const deserializeRecord = (row: Record<string, unknown>): RecordItem => ({
             row.progress_total === null ? undefined : Number(row.progress_total),
           unit: row.progress_unit as ProgressUnit,
         },
+  sourceIds: row.source_ids ? JSON.parse(String(row.source_ids)) as Record<string, string> : undefined,
   startedAt: (row.started_at as string) || undefined,
   completedAt: (row.completed_at as string) || undefined,
   createdAt: row.created_at as string,
@@ -407,6 +413,7 @@ export const createRecord = async (input: {
   tags?: string[];
   notes?: string;
   progress?: Progress;
+  sourceIds?: Record<string, string>;
 }) => {
   const now = new Date().toISOString();
   const cover = defaultCover(input.type);
@@ -424,6 +431,7 @@ export const createRecord = async (input: {
     tags: input.tags ?? [],
     notes: input.notes,
     progress: input.progress,
+    sourceIds: input.sourceIds,
     startedAt: undefined,
     completedAt: undefined,
     createdAt: now,
@@ -447,18 +455,18 @@ export const createRecord = async (input: {
       INSERT INTO records (
         id, type, title, original_title, year, summary, cover_url,
         cover_tone, cover_accent, status, rating, tags, notes,
-        progress_current, progress_total, progress_unit, started_at,
-        completed_at, created_at, updated_at, history
+        progress_current, progress_total, progress_unit, source_ids,
+        started_at, completed_at, created_at, updated_at, history
       )
       VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,
-        $14, $15, $16, $17, $18, $19, $20, $21
+        $14, $15, $16, $17, $18, $19, $20, $21, $22
       )
     `, [
       data.id, data.type, data.title, data.original_title, data.year,
       data.summary, data.cover_url, data.cover_tone, data.cover_accent,
       data.status, data.rating, data.tags, data.notes, data.progress_current,
-      data.progress_total, data.progress_unit, data.started_at,
+      data.progress_total, data.progress_unit, data.source_ids, data.started_at,
       data.completed_at, data.created_at, data.updated_at, data.history
     ]);
   } else {
@@ -466,20 +474,20 @@ export const createRecord = async (input: {
       INSERT INTO records (
         id, type, title, original_title, year, summary, cover_url,
         cover_tone, cover_accent, status, rating, tags, notes,
-        progress_current, progress_total, progress_unit, started_at,
-        completed_at, created_at, updated_at, history
+        progress_current, progress_total, progress_unit, source_ids,
+        started_at, completed_at, created_at, updated_at, history
       )
       VALUES (
         @id, @type, @title, @original_title, @year, @summary, @cover_url,
         @cover_tone, @cover_accent, @status, @rating, @tags, @notes,
-        @progress_current, @progress_total, @progress_unit, @started_at,
-        @completed_at, @created_at, @updated_at, @history
+        @progress_current, @progress_total, @progress_unit, @source_ids,
+        @started_at, @completed_at, @created_at, @updated_at, @history
       )
     `, [
       data.id, data.type, data.title, data.original_title, data.year,
       data.summary, data.cover_url, data.cover_tone, data.cover_accent,
       data.status, data.rating, data.tags, data.notes, data.progress_current,
-      data.progress_total, data.progress_unit, data.started_at,
+      data.progress_total, data.progress_unit, data.source_ids, data.started_at,
       data.completed_at, data.created_at, data.updated_at, data.history
     ]);
   }

@@ -97,6 +97,7 @@ const mapShelfEntry = (
   const rating = pickNumber(entryRecord, ["rating_grade", "rating", "rating_grade_display"]) ??
     pickNumber(item, ["rating"]);
   const notes = clampText(pickString(entryRecord, ["comment_text", "comment", "note"]), 200);
+  const neodbId = pickString(item, ["uuid", "id", "item_uuid"]);
 
   return {
     type: resolvedType,
@@ -108,6 +109,7 @@ const mapShelfEntry = (
     status,
     rating,
     notes,
+    sourceIds: neodbId ? { neodb: neodbId } : undefined,
   };
 };
 
@@ -185,6 +187,7 @@ export const importFromNeoDB = async (token: string) => {
             status: mapped.status,
             rating: mapped.rating,
             notes: mapped.notes,
+            sourceIds: mapped.sourceIds,
           });
           existing.add(key);
           imported += 1;

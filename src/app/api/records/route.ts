@@ -54,9 +54,10 @@ export async function POST(request: Request) {
 
   try {
     // Create local record first
-    const { startedAt, completedAt, ...rest } = body;
+    const { startedAt, completedAt, sourceIds, ...rest } = body;
     const record = await createRecord({
       ...rest,
+      sourceIds,
       notes: rest.notes?.trim() || undefined,
     });
 

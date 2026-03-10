@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { deleteRecord, updateRecord } from "@/lib/db";
+import { deleteRecord, getRecordById, updateRecord } from "@/lib/db";
 import type { Progress, ProgressUnit, RecordStatus } from "@/lib/data";
 import { logError } from "@/lib/logger";
 import { requireAdminPassword } from "@/lib/admin-auth-server";
+import { syncToNeoDB } from "@/lib/providers/neodb-sync";
 
 export const runtime = "nodejs";
 
@@ -92,6 +93,44 @@ export async function PATCH(
 
     if (!updated) {
       return NextResponse.json({ error: "Record not found." }, { status: 404 });
+    }
+
+    // Sync to NeoDB if we have sourceIds.neodb and token
+    const neodbId = updated.sourceIds?.neodb;
+    if (neodbId) {
+      try {
+        const token = request.headers.get("x-neodb-token") || "";
+        if (token) {
+          const syncResult = await syncToNeoDB(
+            {
+              type: updated.type,
+              title: updated.title,
+              originalTitle: updated.originalTitle,
+              year: updated.year,
+              summary: updated.summary,
+              coverUrl: updated.coverUrl,
+              status: updated.status,
+              rating: updated.rating,
+            },
+            neodbId,
+            token
+          );
+
+          if (!syncResult.success) {
+            await logError("neodb sync failed on update (non-critical)", {
+              recordId: id,
+              neodbId,
+              error: syncResult.error,
+            });
+          }
+        }
+      } catch (error) {
+        await logError("neodb sync failed on update (non-critical)", {
+          recordId: id,
+          neodbId,
+          error,
+        });
+      }
     }
 
     return NextResponse.json({ record: updated });
