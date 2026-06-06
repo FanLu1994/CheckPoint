@@ -351,7 +351,14 @@ export default function LibraryPage() {
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((item) => (
-              <motion.div key={item.id} variants={itemVariants} layout>
+              <motion.div
+                key={item.id}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                layout
+              >
                 <RecordCard item={item} />
               </motion.div>
             ))}
@@ -366,7 +373,14 @@ export default function LibraryPage() {
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((item) => (
-              <motion.div key={item.id} variants={itemVariants} layout>
+              <motion.div
+                key={item.id}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                layout
+              >
                 <RecordRow item={item} />
               </motion.div>
             ))}
@@ -381,7 +395,14 @@ export default function LibraryPage() {
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((item) => (
-              <motion.div key={item.id} variants={itemVariants} layout>
+              <motion.div
+                key={item.id}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                layout
+              >
                 <Card className="rounded-3xl border-black/5 bg-white/80 shadow-sm">
                   <CardContent className="flex gap-4 p-5">
                     <div className="flex flex-col items-center">
