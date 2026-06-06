@@ -4,12 +4,14 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
 import AdminAuthProvider from "@/components/admin-auth-provider";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
+import CheckpointIcon from "@/components/checkpoint-icon";
 import { APP_VERSION } from "@/lib/version";
 
 const NAV_ITEMS = [
@@ -21,9 +23,10 @@ const NAV_ITEMS = [
 ] as const;
 
 const GITHUB_URL = "https://github.com/FanLu1994/CheckPoint";
+const motionEase = [0.4, 0, 0.2, 1] as const;
 
 // Framer motion variants
-const navItemVariants = {
+const navItemVariants: Variants = {
   hidden: { opacity: 0, x: -12 },
   visible: (i: number) => ({
     opacity: 1,
@@ -31,17 +34,17 @@ const navItemVariants = {
     transition: {
       delay: i * 0.06,
       duration: 0.3,
-      ease: [0.4, 0, 0.2, 1],
+      ease: motionEase,
     },
   }),
 };
 
-const logoVariants = {
+const logoVariants: Variants = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+    transition: { duration: 0.4, ease: motionEase },
   },
 };
 
@@ -62,14 +65,12 @@ export default function TerminalSidebar({ children }: { children: React.ReactNod
         >
           <div className="flex items-center gap-3">
             <motion.div
-              className="flex h-8 w-8 items-center justify-center bg-[#00a86b] text-white shrink-0"
+              className="flex h-8 w-8 items-center justify-center shrink-0"
               whileHover={{ scale: 1.1, rotate: 3 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <span className="font-[var(--font-terminal)] text-lg font-bold">
-                CP
-              </span>
+              <CheckpointIcon className="h-8 w-8" />
             </motion.div>
             <div className="min-w-0">
               <div className="font-[var(--font-terminal)] text-sm text-[#00a86b] tracking-wider truncate">
@@ -237,13 +238,13 @@ export default function TerminalSidebar({ children }: { children: React.ReactNod
           <>
             <motion.button
               onClick={() => setMenuOpen(true)}
-              className="fixed bottom-6 left-6 z-30 h-12 w-12 rounded-full border border-[#00a86b] bg-[#f7f4ef] text-[#00a86b] shadow-lg"
+              className="fixed bottom-6 left-6 z-30 h-12 w-12 rounded-full border border-[#00a86b] bg-[#f7f4ef] text-[#00a86b] shadow-lg flex items-center justify-center"
               whileHover={{ scale: 1.1, boxShadow: "0 8px 24px rgba(0,168,107,0.3)" }}
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               aria-label="Open menu"
             >
-              <span className="font-[var(--font-terminal)] text-lg">≡</span>
+              <CheckpointIcon className="h-8 w-8" />
             </motion.button>
             <AnimatePresence>
               {menuOpen && (

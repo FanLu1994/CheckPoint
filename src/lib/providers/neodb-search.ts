@@ -34,6 +34,7 @@ const CATEGORY_TO_TYPE: Record<string, MediaType> = {
 
 // NeoDB API base URL
 const NEODB_API_BASE = "https://neodb.social/api";
+const SEARCH_RESULT_LIMIT = 12;
 
 const DETAIL_PATH_MAP: Record<MediaType, string> = {
   book: "book",
@@ -59,6 +60,7 @@ export const searchNeoDB = async (
   try {
     const searchUrl = new URL(`${NEODB_API_BASE}/catalog/search`);
     searchUrl.searchParams.set("query", query);
+    searchUrl.searchParams.set("page_size", String(SEARCH_RESULT_LIMIT));
     if (category) {
       searchUrl.searchParams.set("category", category);
     }
@@ -121,7 +123,7 @@ const parseNeoDBResponse = (
   }
 
   return data.data
-    .slice(0, 3) // Limit to first 3 results
+    .slice(0, SEARCH_RESULT_LIMIT)
     .map((item) => ({
       sources: ["neodb"],
       sourceIds: { neodb: item.uuid || item.id },

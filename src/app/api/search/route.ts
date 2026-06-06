@@ -7,6 +7,7 @@ import { isNeoDBTimeout } from "@/lib/neodb-timeout";
 import { getNeoDBToken } from "@/lib/neodb-token";
 
 export const runtime = "nodejs";
+const SEARCH_RESULT_LIMIT = 12;
 
 const formatCause = (error: unknown) => {
   if (!(error instanceof Error)) return "";
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
 
   try {
     const results = await searchNeoDB(type ?? undefined, query, token || undefined);
-    const limitedResults = results.slice(0, 6);
+    const limitedResults = results.slice(0, SEARCH_RESULT_LIMIT);
 
     return NextResponse.json({ results: limitedResults });
   } catch (error) {
@@ -71,7 +72,7 @@ export async function GET(request: Request) {
 
     const fallbackResults = type ? await basicSearch(type, query) : [];
     return NextResponse.json({
-      results: fallbackResults.slice(0, 6),
+      results: fallbackResults.slice(0, SEARCH_RESULT_LIMIT),
       warning: "NeoDB search failed; using manual entry mode",
     });
   }

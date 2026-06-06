@@ -1,9 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <rect width="128" height="128" fill="#1a1915"/>
-  <text x="64" y="90"
-        font-family="'Courier New', monospace"
-        font-size="100"
-        font-weight="bold"
-        fill="#00a86b"
-        text-anchor="middle">&gt;_</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Checkpoint icon</title>
+  <desc id="desc">A terminal-style media log card with progress bars and a checkpoint marker.</desc>
+  <defs>
+    <linearGradient id="surface" x1="20" y1="14" x2="108" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#25231d"/>
+      <stop offset="1" stop-color="#12110e"/>
+    </linearGradient>
+    <linearGradient id="progress" x1="34" y1="86" x2="96" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00a86b"/>
+      <stop offset="1" stop-color="#0798b4"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="24" fill="url(#surface)"/>
+  <path d="M22 30h84M22 98h84" stroke="#d4cfc5" stroke-opacity=".12" stroke-width="2"/>
+
+  <rect x="28" y="40" width="14" height="48" rx="3" fill="#f5f3ef"/>
+  <rect x="50" y="30" width="14" height="58" rx="3" fill="#00a86b"/>
+  <rect x="72" y="50" width="14" height="38" rx="3" fill="#d48806"/>
+  <path d="M35 48v30M57 38v42M79 58v20" stroke="#1a1915" stroke-opacity=".38" stroke-width="2" stroke-linecap="round"/>
+
+  <path d="M32 96h20l15-15 10 10 23-28" fill="none" stroke="url(#progress)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="100" cy="63" r="13" fill="#12110e" stroke="#00a86b" stroke-width="6"/>
+  <path d="M94 63l4 4 9-10" fill="none" stroke="#f5f3ef" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
