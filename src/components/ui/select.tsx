@@ -37,14 +37,14 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "border-black/10 bg-white text-[#1c1a17] data-[placeholder]:text-[#8a837b] [&_svg:not([class*='text-'])]:text-[#6f6a63] focus-visible:border-[#1c1a17] focus-visible:ring-[#1c1a17]/20 flex w-full items-center justify-between gap-2 rounded-2xl border px-4 py-2.5 text-sm font-medium whitespace-nowrap shadow-sm transition-all duration-200 outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 hover:border-black/15 data-[size=default]:h-10 data-[size=sm]:h-9 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "border-black/10 bg-white text-[#1c1a17] data-[placeholder]:text-[#78716a] [&_svg:not([class*='text-'])]:text-[#635d56] focus-visible:border-[#1c1a17] focus-visible:ring-[#1c1a17]/20 flex w-full items-center justify-between gap-2 rounded-2xl border px-4 py-2.5 text-sm font-medium whitespace-nowrap shadow-sm transition-all duration-200 outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 hover:border-black/15 data-[size=default]:h-10 data-[size=sm]:h-9 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 text-[#6f6a63] transition-transform duration-200 [&[data-state=open]]:rotate-180" />
+        <ChevronDownIcon className="size-4 text-[#635d56] transition-transform duration-200 [&[data-state=open]]:rotate-180" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -94,7 +94,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
-      className={cn("text-[#8a837b] px-3 py-1.5 text-xs font-medium", className)}
+      className={cn("text-[#78716a] px-3 py-1.5 text-xs font-medium", className)}
       {...props}
     />
   )
@@ -109,7 +109,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "focus:bg-[#1c1a17] focus:text-white [&_svg:not([class*='text-'])]:text-[#6f6a63] relative flex w-full cursor-pointer items-center gap-2 rounded-xl py-2 pr-8 pl-3 text-sm font-medium transition-colors duration-150 outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "focus:bg-[#1c1a17] focus:text-white [&_svg:not([class*='text-'])]:text-[#635d56] relative flex w-full cursor-pointer items-center gap-2 rounded-xl py-2 pr-8 pl-3 text-sm font-medium transition-colors duration-150 outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className
       )}
       {...props}
@@ -148,7 +148,7 @@ function SelectScrollUpButton({
     <SelectPrimitive.ScrollUpButton
       data-slot="select-scroll-up-button"
       className={cn(
-        "flex cursor-pointer items-center justify-center py-1 text-[#6f6a63] hover:text-[#1c1a17] transition-colors",
+        "flex cursor-pointer items-center justify-center py-1 text-[#635d56] hover:text-[#1c1a17] transition-colors",
         className
       )}
       {...props}
@@ -166,7 +166,7 @@ function SelectScrollDownButton({
     <SelectPrimitive.ScrollDownButton
       data-slot="select-scroll-down-button"
       className={cn(
-        "flex cursor-pointer items-center justify-center py-1 text-[#6f6a63] hover:text-[#1c1a17] transition-colors",
+        "flex cursor-pointer items-center justify-center py-1 text-[#635d56] hover:text-[#1c1a17] transition-colors",
         className
       )}
       {...props}

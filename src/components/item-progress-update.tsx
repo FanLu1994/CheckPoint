@@ -117,13 +117,14 @@ export default function ItemProgressUpdate({
         </div>
       )}
       <CardContent className="p-6">
-        <div className="text-xs uppercase tracking-wide text-[#8a837b]">
+        <div className="text-xs uppercase tracking-wide text-[#78716a]">
           UPDATE PROGRESS
         </div>
         <div className="mt-4 grid gap-4 text-sm text-[#5d564f]">
           <div className="grid gap-2">
-            <label className="text-xs text-[#8a837b]">Status</label>
+            <label htmlFor="progress-status" className="text-xs text-[#78716a]">Status</label>
             <select
+              id="progress-status"
               value={nextStatus}
               onChange={(event) =>
                 setNextStatus(event.target.value as RecordStatus)
@@ -138,9 +139,10 @@ export default function ItemProgressUpdate({
             </select>
           </div>
           <div className="grid gap-2">
-            <label className="text-xs text-[#8a837b]">Rating</label>
+            <label htmlFor="progress-rating" className="text-xs text-[#78716a]">Rating</label>
             <div className="flex items-center justify-between gap-3">
               <StarRating
+                id="progress-rating"
                 value={ratingValue ?? 0}
                 onChange={(value) => setRatingValue(value)}
                 disabled={isSaving}
@@ -150,7 +152,7 @@ export default function ItemProgressUpdate({
                 <button
                   type="button"
                   onClick={() => setRatingValue(null)}
-                  className="text-xs text-[#6b6560] hover:text-[#1c1a17]"
+                  className="text-xs text-[#6b6560] hover:text-[#1c1a17] min-h-[44px] px-3 py-2"
                 >
                   Clear
                 </button>
@@ -158,8 +160,9 @@ export default function ItemProgressUpdate({
             </div>
           </div>
           <div className="grid gap-2">
-            <label className="text-xs text-[#8a837b]">Note</label>
+            <label htmlFor="progress-note" className="text-xs text-[#78716a]">Note</label>
             <input
+              id="progress-note"
               value={note}
               onChange={(event) => setNote(event.target.value)}
               placeholder="Optional note for history"
@@ -168,15 +171,16 @@ export default function ItemProgressUpdate({
           </div>
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-[#8a837b]">Review</label>
+              <label htmlFor="progress-review" className="text-xs text-[#78716a]">Review</label>
               {!isReviewEditing && (
                 <div className="flex items-center gap-2">
                   {review && (
                     <button
                       type="button"
                       onClick={handleCopyReview}
-                      className="text-[#6b6560] hover:text-[#1c1a17] transition-colors"
+                      className="p-2 text-[#6b6560] hover:text-[#1c1a17] transition-colors"
                       title={copied ? "Copied!" : "Copy review"}
+                      aria-label="Copy review"
                     >
                       {copied ? <Check size={14} /> : <Copy size={14} />}
                     </button>
@@ -184,8 +188,9 @@ export default function ItemProgressUpdate({
                   <button
                     type="button"
                     onClick={() => setIsReviewEditing(true)}
-                    className="text-[#6b6560] hover:text-[#1c1a17] transition-colors"
+                    className="p-2 text-[#6b6560] hover:text-[#1c1a17] transition-colors"
                     title="Edit review"
+                    aria-label="Edit review"
                   >
                     <Pencil size={14} />
                   </button>
@@ -195,6 +200,7 @@ export default function ItemProgressUpdate({
             {isReviewEditing ? (
               <>
                 <textarea
+                  id="progress-review"
                   value={review}
                   onChange={(event) => setReview(event.target.value)}
                   placeholder="Max 200 characters"
@@ -202,13 +208,13 @@ export default function ItemProgressUpdate({
                   rows={3}
                   className="term-input resize-none"
                 />
-                <div className="text-[10px] text-[#9a958f] font-[var(--font-mono)]">
+                <div className="text-[10px] text-[#7a756f] font-[var(--font-mono)]">
                   {review.length}/200
                 </div>
               </>
             ) : (
               <div className="text-sm text-[#5d564f] min-h-[60px] p-3 bg-black/5 rounded-xl">
-                {review || <span className="text-[#9a958f] italic">No review yet</span>}
+                {review || <span className="text-[#7a756f] italic">No review yet</span>}
               </div>
             )}
           </div>

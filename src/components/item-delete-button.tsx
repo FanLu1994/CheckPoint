@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAdminFetch } from "@/components/admin-auth-provider";
 
@@ -38,26 +39,49 @@ export default function ItemDeleteButton({ id }: { id: string }) {
 
   return (
     <>
-      {confirming ? (
-        <button
-          onClick={handleDelete}
-          disabled={isDeleting}
-          className="text-xs font-mono text-red-600 bg-red-100 border-2 border-red-400 px-2 py-1 rounded hover:bg-red-200 transition-colors disabled:opacity-50"
-        >
-          {isDeleting ? "..." : "CONFIRM?"}
-        </button>
-      ) : (
-        <button
-          onClick={handleDelete}
-          disabled={isDeleting}
-          className="text-xs font-mono text-red-600 hover:text-red-800 bg-red-50 border border-red-200 px-2 py-1 rounded hover:bg-red-100 transition-colors disabled:opacity-50"
-        >
-          [DEL]
-        </button>
-      )}
-      {error && (
-        <div className="mt-2 text-xs text-red-600">{error}</div>
-      )}
+      <AnimatePresence mode="wait">
+        {confirming ? (
+          <motion.button
+            key="confirm"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-xs font-mono text-red-600 bg-red-100 border-2 border-red-400 px-4 py-2.5 rounded disabled:opacity-50"
+          >
+            {isDeleting ? "..." : "CONFIRM?"}
+          </motion.button>
+        ) : (
+          <motion.button
+            key="delete"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            whileHover={{ scale: 1.05, backgroundColor: "rgba(254,226,226,1)" }}
+            whileTap={{ scale: 0.95 }}
+            className="text-xs font-mono text-red-600 bg-red-50 border border-red-200 px-4 py-2.5 rounded disabled:opacity-50"
+          >
+            [DEL]
+          </motion.button>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="mt-2 text-xs text-red-600"
+          >
+            {error}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

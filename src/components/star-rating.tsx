@@ -56,6 +56,7 @@ export default function StarRating({
   className,
   displayValue,
   showValue = true,
+  id,
 }: {
   value: number;
   onChange: (value: number) => void;
@@ -63,6 +64,7 @@ export default function StarRating({
   className?: string;
   displayValue?: number | null;
   showValue?: boolean;
+  id?: string;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
   const [isFocused, setIsFocused] = useState(false);
@@ -116,6 +118,7 @@ export default function StarRating({
       {/* Value input */}
       <div className="relative">
         <input
+          id={id}
           type="number"
           min="0"
           max="10"
@@ -126,9 +129,9 @@ export default function StarRating({
           onBlur={handleInputBlur}
           disabled={disabled}
           placeholder="0-10"
-          className="w-16 px-2 py-1 text-center text-sm font-medium border border-[#d4cfc5] rounded-lg bg-white text-[#1c1a17] placeholder:text-[#9a958f] focus:outline-none focus:ring-2 focus:ring-[#f5a524] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-16 px-2 py-1 text-center text-sm font-medium border border-[#d4cfc5] rounded-lg bg-white text-[#1c1a17] placeholder:text-[#7a756f] focus:outline-none focus:ring-2 focus:ring-[#f5a524] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         />
-        <span className="absolute right-[-1.25rem] top-1/2 -translate-y-1/2 text-xs text-[#9a958f]">
+        <span className="absolute right-[-1.25rem] top-1/2 -translate-y-1/2 text-xs text-[#7a756f]">
           /10
         </span>
       </div>

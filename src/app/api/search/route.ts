@@ -40,7 +40,7 @@ export async function GET(request: Request) {
 
   try {
     const results = await searchNeoDB(type ?? undefined, query, token || undefined);
-    const limitedResults = results.slice(0, 3);
+    const limitedResults = results.slice(0, 6);
 
     return NextResponse.json({ results: limitedResults });
   } catch (error) {
@@ -71,7 +71,7 @@ export async function GET(request: Request) {
 
     const fallbackResults = type ? await basicSearch(type, query) : [];
     return NextResponse.json({
-      results: fallbackResults.slice(0, 3),
+      results: fallbackResults.slice(0, 6),
       warning: "NeoDB search failed; using manual entry mode",
     });
   }

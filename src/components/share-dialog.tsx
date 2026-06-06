@@ -24,6 +24,7 @@ export function ShareDialog({ item, open, onOpenChange }: ShareDialogProps) {
   const [imageCopied, setImageCopied] = useState(false)
   const [textCopied, setTextCopied] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const previewRef = useRef<HTMLDivElement>(null)
 
   const generateImage = async () => {
@@ -62,6 +63,7 @@ export function ShareDialog({ item, open, onOpenChange }: ShareDialogProps) {
     if (!previewRef.current || isGenerating) return
 
     setIsGenerating(true)
+    setError(null)
     try {
       const dataUrl = await generateImage()
       if (!dataUrl) return
@@ -75,8 +77,9 @@ export function ShareDialog({ item, open, onOpenChange }: ShareDialogProps) {
       ])
       setImageCopied(true)
       setTimeout(() => setImageCopied(false), 2000)
-    } catch (error) {
-      console.error("Failed to copy image:", error)
+    } catch (err) {
+      console.error("Failed to copy image:", err)
+      setError("图片生成失败，请尝试复制文本")
     } finally {
       setIsGenerating(false)
     }
@@ -107,6 +110,7 @@ export function ShareDialog({ item, open, onOpenChange }: ShareDialogProps) {
     if (!previewRef.current || isGenerating) return
 
     setIsGenerating(true)
+    setError(null)
     try {
       const dataUrl = await generateImage()
       if (!dataUrl) return
@@ -118,8 +122,9 @@ export function ShareDialog({ item, open, onOpenChange }: ShareDialogProps) {
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
-    } catch (error) {
-      console.error("Failed to download image:", error)
+    } catch (err) {
+      console.error("Failed to download image:", err)
+      setError("图片下载失败，请重试")
     } finally {
       setIsGenerating(false)
     }
@@ -201,6 +206,10 @@ export function ShareDialog({ item, open, onOpenChange }: ShareDialogProps) {
             </>
           )}
         </Button>
+
+        {error && (
+          <div className="text-xs text-red-600 text-center">{error}</div>
+        )}
       </DialogContent>
     </Dialog>
   )

@@ -1,6 +1,10 @@
-﻿import Link from "next/link";
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
 import type { RecordItem } from "@/lib/data";
 import { Card, CardContent } from "@/components/ui/card";
+import { safeCssUrl } from "@/lib/utils";
 
 const TYPE_LABELS = { book: "书籍", film: "电影", series: "剧集", game: "游戏" } as const;
 const STATUS_LABELS = {
@@ -53,36 +57,42 @@ const renderRating = (rating: number | undefined) => {
 
 export default function RecordCard({ item }: { item: RecordItem }) {
   return (
-    <Link href={`/items/${item.id}`} className="block h-full">
-      <Card className="group h-full overflow-hidden rounded-2xl border-black/5 bg-white/70 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-        <CardContent className="flex h-full flex-col gap-2 px-4 pt-3 pb-0">
-          <div className="space-y-2">
-            <div className="text-xs uppercase tracking-wide text-[#8a837b]">
-              {TYPE_LABELS[item.type]}
+    <Link href={`/items/${item.id}`} aria-label={item.title} className="block h-full">
+      <motion.div
+        whileHover={{ y: -4, boxShadow: "0 12px 32px rgba(0,0,0,0.1)" }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        <Card className="group h-full overflow-hidden rounded-2xl border-black/5 bg-white/70 shadow-sm">
+          <CardContent className="flex h-full flex-col gap-2 px-4 pt-3 pb-0">
+            <div className="space-y-2">
+              <div className="text-xs uppercase tracking-wide text-[#78716a]">
+                {TYPE_LABELS[item.type]}
+              </div>
+              <h3 className="line-clamp-1 font-display text-lg font-semibold text-[#1c1a17] group-hover:text-[#00a86b] transition-colors duration-200">
+                {item.title}
+              </h3>
+              <p className="line-clamp-2 text-sm text-[#635d56]">{item.summary}</p>
             </div>
-            <h3 className="line-clamp-1 font-display text-lg font-semibold text-[#1c1a17]">
-              {item.title}
-            </h3>
-            <p className="line-clamp-2 text-sm text-[#6f6a63]">{item.summary}</p>
-          </div>
 
-          <div className="relative mt-auto -mx-4 h-40 overflow-hidden border border-black/5">
-            <div
-              className="absolute inset-0"
-              style={{
-                background: item.coverUrl
-                  ? `url(${item.coverUrl}) center/cover no-repeat`
-                  : `linear-gradient(145deg, ${item.cover.tone}, ${item.cover.accent})`,
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1c1a17]/80 via-[#1c1a17]/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-3 text-xs text-white">
-              <span className="font-medium">{STATUS_LABELS[item.status]}</span>
-              <span className="font-medium">{renderRating(item.rating)}</span>
+            <div className="relative mt-auto -mx-4 h-40 overflow-hidden border border-black/5">
+              <div
+                className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                style={{
+                  background: item.coverUrl
+                    ? safeCssUrl(item.coverUrl)
+                    : `linear-gradient(145deg, ${item.cover.tone}, ${item.cover.accent})`,
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1c1a17]/80 via-[#1c1a17]/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-3 text-xs text-white">
+                <span className="font-medium">{STATUS_LABELS[item.status]}</span>
+                <span className="font-medium">{renderRating(item.rating)}</span>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
     </Link>
   );
 }

@@ -17,6 +17,12 @@ import {
   createAdminFetchResponse,
   type AdminFetchResponse,
 } from "@/lib/admin-auth-client";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 type AdminAuthContextValue = {
   fetchWithAdmin: (input: RequestInfo | URL, init?: RequestInit) => Promise<AdminFetchResponse>;
@@ -139,53 +145,51 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
   return (
     <AdminAuthContext.Provider value={contextValue}>
       {children}
-      {open ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-sm rounded-2xl border border-[#d4cfc5] bg-[#fdfcf9] p-5 shadow-lg">
-            <div className="font-[var(--font-terminal)] text-sm text-[#1a1915]">
-              ADMIN_AUTH
-            </div>
-            <p className="mt-2 text-xs text-[#6b6560] font-[var(--font-mono)]">
-              请输入管理员密码以继续操作。
-            </p>
-            <div className="mt-4 space-y-2">
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="admin password"
-                className="term-input w-full font-[var(--font-mono)] text-sm"
-                autoFocus
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-              />
-              {error ? (
-                <div className="text-[10px] text-[#c53030] font-[var(--font-mono)]">
-                  {error}
-                </div>
-              ) : null}
-            </div>
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={handleSubmit}
-                className="term-btn flex-1 glitch-hover"
-              >
-                <span>{"[>] CONFIRM"}</span>
-              </button>
-              <button
-                onClick={() => closePrompt(null)}
-                className="term-btn flex-1 border-[#6b6560] text-[#6b6560] hover:text-white hover:bg-[#6b6560]"
-              >
-                <span>{"[x] CANCEL"}</span>
-              </button>
-            </div>
+      <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) closePrompt(null); }}>
+        <DialogContent className="max-w-sm rounded-2xl border border-[#d4cfc5] bg-[#fdfcf9] p-5 shadow-lg">
+          <DialogTitle className="font-[var(--font-terminal)] text-sm text-[#1a1915]">
+            ADMIN_AUTH
+          </DialogTitle>
+          <DialogDescription className="text-xs text-[#6b6560] font-[var(--font-mono)]">
+            请输入管理员密码以继续操作。
+          </DialogDescription>
+          <div className="mt-4 space-y-2">
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="admin password"
+              className="term-input w-full font-[var(--font-mono)] text-sm"
+              autoFocus
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  handleSubmit();
+                }
+              }}
+            />
+            {error ? (
+              <div className="text-[10px] text-[#c53030] font-[var(--font-mono)]">
+                {error}
+              </div>
+            ) : null}
           </div>
-        </div>
-      ) : null}
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={handleSubmit}
+              className="term-btn flex-1"
+            >
+              <span>{"[>] CONFIRM"}</span>
+            </button>
+            <button
+              onClick={() => closePrompt(null)}
+              className="term-btn flex-1 border-[#6b6560] text-[#6b6560] hover:text-white hover:bg-[#6b6560]"
+            >
+              <span>{"[x] CANCEL"}</span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AdminAuthContext.Provider>
   );
 }

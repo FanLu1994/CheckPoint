@@ -78,7 +78,7 @@ export default function AdminNotConfiguredPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-[#d4cfc5] flex justify-between text-xs text-[#9a958f] font-[var(--font-mono)]">
+        <div className="mt-6 pt-4 border-t border-[#d4cfc5] flex justify-between text-xs text-[#7a756f] font-[var(--font-mono)]">
           <span>code: ENJOYRECORD_ADMIN_PASSWORD_MISSING</span>
           <span>docs: /README.md</span>
         </div>
@@ -86,7 +86,7 @@ export default function AdminNotConfiguredPage() {
         {/* Refresh Button */}
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 w-full term-btn glitch-hover"
+          className="mt-4 w-full term-btn"
         >
           <span>{"[>] RESTART_AFTER_CONFIG"}</span>
         </button>

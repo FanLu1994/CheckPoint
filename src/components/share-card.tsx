@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, forwardRef } from "react"
 import { RecordItem } from "@/lib/data"
 import { typeLabels, typeBadgeClass, statusBadgeClass, statusLabels } from "@/lib/labels"
+import { StarDisplay } from "@/components/star-rating"
 
 interface ShareCardProps {
   item: RecordItem
@@ -34,7 +35,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ item }, r
   return (
     <div
       ref={cardRef}
-      className="w-[450px] rounded-3xl border border-black/5 bg-white/80 p-6"
+      className="w-full max-w-[450px] rounded-3xl border border-black/5 bg-white/80 p-6"
     >
       {/* Header - Type and Status Badges */}
       <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -44,8 +45,8 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ item }, r
         <span className={`inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium ${statusBadgeClass(item.status)}`}>
           {statusLabels[item.status]}
         </span>
-        <span className="text-xs text-[#8a837b]">{item.year}</span>
-        <span className="ml-auto text-xs text-[#8a837b]">EnjoyRecord</span>
+        <span className="text-xs text-[#78716a]">{item.year}</span>
+        <span className="ml-auto text-xs text-[#78716a]">Checkpoint</span>
       </div>
 
       {/* Main Content */}
@@ -71,7 +72,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ item }, r
           <div>
             <h2 className="text-2xl font-semibold leading-tight">{item.title}</h2>
             {item.originalTitle && (
-              <p className="text-sm text-[#8a837b] mt-0.5">{item.originalTitle}</p>
+              <p className="text-sm text-[#78716a] mt-0.5">{item.originalTitle}</p>
             )}
           </div>
           <p className="text-sm text-[#5d564f] leading-relaxed line-clamp-3">
@@ -79,7 +80,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ item }, r
           </p>
           {item.rating && (
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-[#d48806]">★</span>
+              <StarDisplay value={item.rating} size="sm" />
               <span className="font-medium">{item.rating}/10</span>
             </div>
           )}
@@ -89,7 +90,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ item }, r
       {/* Review/Notes */}
       {item.notes && (
         <div className="mt-4 rounded-2xl border border-black/5 bg-white p-4">
-          <div className="text-xs text-[#8a837b] mb-1.5">评价</div>
+          <div className="text-xs text-[#78716a] mb-1.5">评价</div>
           <p className="text-sm text-[#3d3834] leading-relaxed whitespace-pre-wrap">
             {item.notes}
           </p>
@@ -102,7 +103,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ item }, r
           {item.tags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center justify-center rounded-full border border-black/10 px-2 py-0.5 text-xs text-[#6f6a63]"
+              className="inline-flex items-center justify-center rounded-full border border-black/10 px-2 py-0.5 text-xs text-[#635d56]"
             >
               {tag}
             </span>
@@ -112,7 +113,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({ item }, r
 
       {/* Footer */}
       <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between">
-        <div className="text-xs text-[#8a837b]">
+        <div className="text-xs text-[#78716a]">
           记录于 {new Date(item.createdAt).toLocaleDateString("zh-CN")}
         </div>
       </div>

@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "set HTTP_PROXY=http://127.0.0.1:7890 && set HTTPS_PROXY=http://127.0.0.1:7890 && next dev",
-    "build": "next build",
+    "build": "set HTTP_PROXY=http://127.0.0.1:7890 && set HTTPS_PROXY=http://127.0.0.1:7890 && next build",
     "start": "next start",
+    "seed": "npx tsx scripts/seed.ts",
     "lint": "eslint"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.40.0",
     "html-to-image": "^1.11.13",
     "https-proxy-agent": "^7.0.6",
     "lucide-react": "^0.562.0",

@@ -18,7 +18,7 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
-  title: "EnjoyRecord",
+  title: "Checkpoint",
   description: "记录阅读与观影历程的数字终端",
 };
 
@@ -36,6 +36,12 @@ export default function RootLayout({
         }}
       >
         <ConfigChecker />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#00a86b] focus:text-white focus:rounded-lg focus:shadow-lg"
+        >
+          跳到主要内容
+        </a>
         <TerminalSidebar>{children}</TerminalSidebar>
       </body>
     </html>

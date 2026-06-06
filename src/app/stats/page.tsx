@@ -1,4 +1,4 @@
-import StatCard from "@/components/stat-card";
+import StatCard, { AnimatedBar } from "@/components/stat-card";
 import { getAllRecords } from "@/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -7,7 +7,9 @@ export const dynamic = "force-dynamic";
 export default async function StatsPage() {
   const recordItems = await getAllRecords();
   const completed = recordItems.filter((item) => item.status === "completed");
-  const inProgress = recordItems.filter((item) => item.status === "in_progress");
+  const inProgress = recordItems.filter(
+    (item) => item.status === "in_progress"
+  );
 
   // 按类型统计完成数
   const completedByType = completed.reduce(
@@ -62,43 +64,49 @@ export default async function StatsPage() {
   });
 
   const maxMonthly = Math.max(...monthly.map((item) => item.count), 1);
-  const maxRating = Math.max(...ratingBuckets.map((item) => item.count), 1);
+  const maxRating = Math.max(
+    ...ratingBuckets.map((item) => item.count),
+    1
+  );
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-semibold">统计回顾</h1>
-        <p className="text-sm text-[#6f6a63]">
+        <p className="text-sm text-[#635d56]">
           查看完成数量、类型分布与评分走势。
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="阅读完成" value={`${completedByType.book} 本`} />
-        <StatCard label="观影完成" value={`${completedByType.film + completedByType.series} 部`} />
+        <StatCard
+          label="观影完成"
+          value={`${completedByType.film + completedByType.series} 部`}
+        />
         <StatCard label="进行中" value={`${inProgress.length} 项`} />
         <StatCard label="平均评分" value={avgRating.toFixed(1)} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="rounded-3xl border-black/5 bg-white/80 shadow-sm">
+        <Card className="spotlight-card rounded-3xl border-black/5 bg-white/80 shadow-sm">
           <CardContent className="p-6">
-            <div className="text-xs uppercase tracking-wide text-[#8a837b]">
+            <div className="text-xs uppercase tracking-wide text-[#78716a]">
               月度完成数
             </div>
             <div className="mt-5 grid gap-3">
-              {monthly.map((item) => (
-                <div key={item.label} className="flex items-center gap-4 text-sm">
-                  <span className="w-12 text-[#6f6a63]">{item.label}</span>
-                  <div className="h-2 flex-1 rounded-full bg-[#efe8e0]">
-                    <div
-                      className="h-2 rounded-full bg-[#1c1a17]"
-                      style={{
-                        width: `${(item.count / maxMonthly) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <span className="w-8 text-right text-[#1c1a17]">
+              {monthly.map((item, i) => (
+                <div
+                  key={item.label}
+                  className="flex items-center gap-4 text-sm"
+                >
+                  <span className="w-12 text-[#635d56]">{item.label}</span>
+                  <AnimatedBar
+                    value={item.count}
+                    max={maxMonthly}
+                    delay={i}
+                  />
+                  <span className="w-8 text-right text-[#1c1a17] tabular-nums">
                     {item.count}
                   </span>
                 </div>
@@ -107,29 +115,31 @@ export default async function StatsPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-black/5 bg-white/80 shadow-sm">
+        <Card className="spotlight-card rounded-3xl border-black/5 bg-white/80 shadow-sm">
           <CardContent className="p-6">
-            <div className="text-xs uppercase tracking-wide text-[#8a837b]">
+            <div className="text-xs uppercase tracking-wide text-[#78716a]">
               类型占比
             </div>
-            <div className="mt-5 space-y-3 text-sm text-[#6f6a63]">
+            <div className="mt-5 space-y-3 text-sm text-[#635d56]">
               {[
-                { label: "书籍", count: typeCounts.book },
-                { label: "电影", count: typeCounts.film },
-                { label: "剧集", count: typeCounts.series },
-                { label: "游戏", count: typeCounts.game },
-              ].map((item) => (
+                { label: "书籍", count: typeCounts.book, color: "#d48806" },
+                { label: "电影", count: typeCounts.film, color: "#c53030" },
+                {
+                  label: "剧集",
+                  count: typeCounts.series,
+                  color: "#0798b4",
+                },
+                { label: "游戏", count: typeCounts.game, color: "#00a86b" },
+              ].map((item, i) => (
                 <div key={item.label} className="flex items-center gap-4">
                   <span className="w-12">{item.label}</span>
-                  <div className="h-2 flex-1 rounded-full bg-[#efe8e0]">
-                    <div
-                      className="h-2 rounded-full bg-[#1c1a17]"
-                      style={{
-                        width: `${(item.count / recordItems.length) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <span className="w-8 text-right text-[#1c1a17]">
+                  <AnimatedBar
+                    value={item.count}
+                    max={recordItems.length}
+                    color={item.color}
+                    delay={i}
+                  />
+                  <span className="w-8 text-right text-[#1c1a17] tabular-nums">
                     {item.count}
                   </span>
                 </div>
@@ -139,24 +149,25 @@ export default async function StatsPage() {
         </Card>
       </div>
 
-      <Card className="rounded-3xl border-black/5 bg-white/80 shadow-sm">
+      <Card className="spotlight-card rounded-3xl border-black/5 bg-white/80 shadow-sm">
         <CardContent className="p-6">
-          <div className="text-xs uppercase tracking-wide text-[#8a837b]">
+          <div className="text-xs uppercase tracking-wide text-[#78716a]">
             评分分布
           </div>
           <div className="mt-5 grid gap-3">
-            {ratingBuckets.map((bucket) => (
-              <div key={bucket.label} className="flex items-center gap-4 text-sm">
-                <span className="w-16 text-[#6f6a63]">{bucket.label}</span>
-                <div className="h-2 flex-1 rounded-full bg-[#efe8e0]">
-                  <div
-                    className="h-2 rounded-full bg-[#1c1a17]"
-                    style={{
-                      width: `${(bucket.count / maxRating) * 100}%`,
-                    }}
-                  />
-                </div>
-                <span className="w-8 text-right text-[#1c1a17]">
+            {ratingBuckets.map((bucket, i) => (
+              <div
+                key={bucket.label}
+                className="flex items-center gap-4 text-sm"
+              >
+                <span className="w-16 text-[#635d56]">{bucket.label}</span>
+                <AnimatedBar
+                  value={bucket.count}
+                  max={maxRating}
+                  color="#d48806"
+                  delay={i}
+                />
+                <span className="w-8 text-right text-[#1c1a17] tabular-nums">
                   {bucket.count}
                 </span>
               </div>

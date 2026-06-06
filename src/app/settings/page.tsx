@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAdminFetch } from "@/components/admin-auth-provider";
+import { APP_VERSION } from "@/lib/version";
 
 export default function SettingsPage() {
   const [syncing, setSyncing] = useState(false);
@@ -44,9 +45,9 @@ export default function SettingsPage() {
         <div className="flex items-center gap-3 mb-2">
           <span className="font-[var(--font-terminal)] text-[#00a86b] text-sm">./settings</span>
           <span className="text-[#d4cfc5]">→</span>
-          <span className="text-[#9a958f] text-sm">configuration</span>
+          <span className="text-[#7a756f] text-sm">configuration</span>
         </div>
-        <p className="text-[#9a958f] text-sm font-[var(--font-mono)]">
+        <p className="text-[#7a756f] text-sm font-[var(--font-mono)]">
           neo_api_token=env<span className="term-cursor" />
         </p>
       </header>
@@ -63,7 +64,7 @@ export default function SettingsPage() {
             <button
               onClick={runSync}
               disabled={syncing}
-              className="term-btn w-full glitch-hover disabled:opacity-50 disabled:cursor-not-allowed"
+              className="term-btn w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span>{syncing ? "[~] SYNCING_NEODB" : "[>] SYNC_NEODB_NOW"}</span>
             </button>
@@ -92,8 +93,8 @@ export default function SettingsPage() {
               <span className="text-[#1a1915]">"neodb.social"</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#6b6560]">api_status:</span>
-              <span className="text-[#00a86b]">"ONLINE"</span>
+              <span className="text-[#6b6560]">data_source:</span>
+              <span className="text-[#00a86b]">"CONFIGURED"</span>
             </div>
             <div className="flex justify-between">
               <span className="text-[#6b6560]">token_source:</span>
@@ -115,7 +116,7 @@ export default function SettingsPage() {
 
           <div className="text-xs text-[#6b6560] space-y-3 font-[var(--font-mono)]">
             <p>
-              <span className="text-[#1a1915]">EnjoyRecord</span> 会自动将记录同步到您的 NeoDB 账户。
+              <span className="text-[#1a1915]">Checkpoint</span> 会自动将记录同步到您的 NeoDB 账户。
             </p>
             <div className="space-y-1 pl-4 border-l-2 border-[#d4cfc5]">
               <p>• 搜索: 从 NeoDB 公开目录获取</p>
@@ -138,7 +139,7 @@ export default function SettingsPage() {
 
           <div className="text-xs text-[#6b6560] space-y-2 font-[var(--font-mono)]">
             <p>
-              <span className="text-[#1a1915]">EnjoyRecord</span> is a personal
+              <span className="text-[#1a1915]">Checkpoint</span> is a personal
               tracking system for reading and viewing history.
             </p>
             <p>
@@ -146,7 +147,7 @@ export default function SettingsPage() {
               Records synced to your NeoDB account.
             </p>
             <div className="pt-2 border-t border-[#d4cfc5]">
-              <span>version: 0.2.0-terminal</span>
+              <span>version: {APP_VERSION}-terminal</span>
               <span className="mx-2">|</span>
               <span>build: 2025.01</span>
             </div>
@@ -156,7 +157,7 @@ export default function SettingsPage() {
 
       {/* Footer */}
       <footer className="mt-12 pt-6 border-t border-[#d4cfc5]">
-        <div className="flex items-center justify-between text-xs text-[#9a958f] font-[var(--font-mono)]">
+        <div className="flex items-center justify-between text-xs text-[#7a756f] font-[var(--font-mono)]">
           <span>config: loaded</span>
           <span>ready</span>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { safeCssUrl } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import type { RecordStatus } from "@/lib/data";
 import { statusLabels } from "@/lib/labels";
@@ -28,6 +29,7 @@ export default function NewRecordPage() {
   const [searching, setSearching] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedResult, setSelectedResult] = useState<SearchItem | null>(null);
+  const [showAllResults, setShowAllResults] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -65,7 +67,8 @@ export default function NewRecordPage() {
       const data = await response.json();
       const results = (data.results || []) as SearchItem[];
 
-      setSearchResults(results.slice(0, 3)); // Limit to 3 results total
+      setSearchResults(results);
+      setShowAllResults(false);
       setSelectedResult(results[0] ?? null);
 
       if (results.length === 0) {
@@ -123,9 +126,9 @@ export default function NewRecordPage() {
         <div className="flex items-center gap-3 mb-2">
           <span className="font-[var(--font-terminal)] text-[#00a86b] text-sm">./new</span>
           <span className="text-[#d4cfc5]">→</span>
-          <span className="text-[#9a958f] text-sm">add_record</span>
+          <span className="text-[#7a756f] text-sm">add_record</span>
         </div>
-        <p className="text-[#9a958f] text-sm font-[var(--font-mono)]">
+        <p className="text-[#7a756f] text-sm font-[var(--font-mono)]">
           mode: universal_search<span className="term-cursor" />
         </p>
       </header>
@@ -183,11 +186,11 @@ export default function NewRecordPage() {
             <h2 className="font-[var(--font-terminal)] text-[#1a1915] text-sm mb-4 flex items-center gap-2">
               <span className="text-[#00a86b]">&gt;</span>
               SEARCH_RESULTS
-              <span className="text-[#9a958f]">({searchResults.length})</span>
+              <span className="text-[#7a756f]">({searchResults.length})</span>
             </h2>
 
-            <div className="space-y-3">
-              {searchResults.map((item, index) => {
+            <div className="space-y-3" role="listbox" aria-label="搜索结果">
+              {(showAllResults ? searchResults : searchResults.slice(0, 3)).map((item, index) => {
                 const itemKey =
                   item.sourceIds?.neodb ? `neodb-${item.sourceIds.neodb}` : `${item.type}-${item.title}-${index}`;
                 const selected =
@@ -195,10 +198,13 @@ export default function NewRecordPage() {
                     ? selectedResult.sourceIds.neodb === item.sourceIds?.neodb
                     : selectedResult?.title === item.title && selectedResult?.type === item.type;
                 return (
-                  <div
+                  <button
                     key={itemKey}
+                    type="button"
+                    role="option"
+                    aria-selected={selected}
                     onClick={() => setSelectedResult(item)}
-                    className={`p-3 border cursor-pointer transition-all ${
+                    className={`w-full text-left p-3 border cursor-pointer transition-all ${
                       selected
                         ? "border-[#00a86b] bg-[#00a86b]/10"
                         : "border-[#d4cfc5] hover:border-[#00a86b]/50"
@@ -210,7 +216,7 @@ export default function NewRecordPage() {
                         className="shrink-0 w-12 h-16 rounded border border-[#d4cfc5] bg-white"
                         style={{
                           background: item.coverUrl
-                            ? `url(${item.coverUrl}) center/cover`
+                            ? safeCssUrl(item.coverUrl)
                             : undefined,
                         }}
                       />
@@ -230,7 +236,7 @@ export default function NewRecordPage() {
                           <p className="text-[#6b6560] text-xs truncate">{item.originalTitle}</p>
                         )}
                         {item.year && (
-                          <p className="text-[#9a958f] text-xs">{item.year}</p>
+                          <p className="text-[#7a756f] text-xs">{item.year}</p>
                         )}
                         {item.summary && (
                           <p className="text-[#6b6560] text-xs mt-1 line-clamp-2">
@@ -246,10 +252,19 @@ export default function NewRecordPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
+            {!showAllResults && searchResults.length > 3 && (
+              <button
+                type="button"
+                onClick={() => setShowAllResults(true)}
+                className="term-btn w-full mt-3"
+              >
+                <span>[+] SHOW_MORE ({searchResults.length - 3})</span>
+              </button>
+            )}
           </div>
         )}
 
@@ -263,10 +278,11 @@ export default function NewRecordPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Status */}
             <div>
-              <label className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+              <label htmlFor="new-status" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
                 status=
               </label>
               <select
+                id="new-status"
                 value={form.status}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, status: e.target.value as RecordStatus }))
@@ -283,10 +299,11 @@ export default function NewRecordPage() {
 
             {/* Rating */}
             <div>
-              <label className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+              <label htmlFor="new-rating" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
                 rating=
               </label>
               <StarRating
+                id="new-rating"
                 value={form.rating}
                 onChange={(value) => setForm((prev) => ({ ...prev, rating: value }))}
               />
@@ -294,10 +311,11 @@ export default function NewRecordPage() {
           </div>
 
           <div className="mt-4">
-            <label className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+            <label htmlFor="new-review" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
               review=
             </label>
             <textarea
+              id="new-review"
               value={form.notes}
               onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
               placeholder="写一句评价（最多 200 字）"
@@ -305,7 +323,7 @@ export default function NewRecordPage() {
               rows={3}
               className="term-input w-full resize-none"
             />
-            <div className="mt-1 text-[10px] text-[#9a958f] font-[var(--font-mono)]">
+            <div className="mt-1 text-[10px] text-[#7a756f] font-[var(--font-mono)]">
               {form.notes.length}/200
             </div>
           </div>
@@ -314,7 +332,7 @@ export default function NewRecordPage() {
           <button
             onClick={handleSave}
             disabled={saving || searchResults.length === 0}
-            className="term-btn w-full mt-4 glitch-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            className="term-btn w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>{saving ? "[...] SAVING..." : "[>] SAVE_TO_DATABASE"}</span>
           </button>
@@ -323,7 +341,7 @@ export default function NewRecordPage() {
 
       {/* Footer */}
       <footer className="mt-12 pt-6 border-t border-[#d4cfc5]">
-        <div className="flex items-center justify-between text-xs text-[#9a958f] font-[var(--font-mono)]">
+        <div className="flex items-center justify-between text-xs text-[#7a756f] font-[var(--font-mono)]">
           <span>results: {searchResults.length}</span>
           <span>ready</span>
         </div>
