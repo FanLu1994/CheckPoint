@@ -82,15 +82,14 @@ export function AnimatedBar({
     <div ref={ref} className="h-2 flex-1 rounded-full bg-[#efe8e0] overflow-hidden">
       <motion.div
         className="h-2 rounded-full"
-        style={{ background: color }}
+        style={{ background: color, transformOrigin: "left" }}
         initial={{ scaleX: 0 }}
         animate={isVisible ? { scaleX: 1 } : { scaleX: 0 }}
         transition={{
           duration: 0.8,
           delay: delay * 0.1,
-          ease: [0.4, 0, 0.2, 1],
+          ease: [0.4, 0, 0.2, 1] as const,
         }}
-        {...{ style: { background: color, transformOrigin: "left" } }}
       />
     </div>
   );

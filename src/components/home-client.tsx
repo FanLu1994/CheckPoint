@@ -207,7 +207,7 @@ export default function HomeClient({ records }: HomeClientProps) {
           className="term-card text-center py-16 px-6"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] as const }}
         >
           {/* Icon */}
           <motion.div
