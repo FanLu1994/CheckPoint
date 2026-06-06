@@ -90,7 +90,14 @@ export default function SettingsPage() {
           <div className="space-y-2 text-xs font-[var(--font-mono)]">
             <div className="flex justify-between">
               <span className="text-[#6b6560]">data_source:</span>
-              <span className="text-[#1a1915]">"neodb.social"</span>
+              <a
+                href="https://neodb.social"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#1a1915] hover:text-[#00a86b] underline decoration-dotted underline-offset-2 transition-colors"
+              >
+                "neodb.social" ↗
+              </a>
             </div>
             <div className="flex justify-between">
               <span className="text-[#6b6560]">data_source:</span>
@@ -143,8 +150,26 @@ export default function SettingsPage() {
               tracking system for reading and viewing history.
             </p>
             <p>
-              Powered by <span className="text-[#00a86b]">NeoDB</span> API.
-              Records synced to your NeoDB account.
+              Powered by{" "}
+              <a
+                href="https://neodb.social"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#00a86b] hover:underline transition-colors"
+              >
+                NeoDB
+              </a>{" "}
+              API.
+              Records synced to your{" "}
+              <a
+                href="https://neodb.social"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#00a86b] hover:underline transition-colors"
+              >
+                NeoDB
+              </a>{" "}
+              account.
             </p>
             <div className="pt-2 border-t border-[#d4cfc5]">
               <span>version: {APP_VERSION}-terminal</span>
