@@ -268,17 +268,7 @@ export default function TerminalSidebar({ children }: { children: React.ReactNod
 
         {/* Main Content */}
         <main id="main-content" className="py-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] as const }}
-            >
-              <AdminAuthProvider>{children}</AdminAuthProvider>
-            </motion.div>
-          </AnimatePresence>
+          <AdminAuthProvider>{children}</AdminAuthProvider>
         </main>
       </div>
     </div>
