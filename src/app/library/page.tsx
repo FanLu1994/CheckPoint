@@ -47,9 +47,8 @@ const sortOptions = [
 
 // Animation variants
 const listVariants = {
-  hidden: { opacity: 0 },
+  hidden: {},
   visible: {
-    opacity: 1,
     transition: {
       staggerChildren: 0.05,
       delayChildren: 0.1,
@@ -58,9 +57,8 @@ const listVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { y: 16 },
   visible: {
-    opacity: 1,
     y: 0,
     transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] as const },
   },
@@ -160,8 +158,8 @@ export default function LibraryPage() {
     <div className="space-y-8">
       <motion.div
         className="flex flex-wrap items-center justify-between gap-4"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ y: -10 }}
+        animate={{ y: 0 }}
         transition={{ duration: 0.4 }}
       >
         <div>
@@ -189,8 +187,8 @@ export default function LibraryPage() {
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ y: 10 }}
+        animate={{ y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         <Card className="rounded-3xl border-black/5 bg-white/80 shadow-sm">
@@ -275,8 +273,6 @@ export default function LibraryPage() {
 
       {loading ? (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
           className={
             view === "card"
               ? "grid gap-5 md:grid-cols-2 xl:grid-cols-3"
@@ -291,8 +287,8 @@ export default function LibraryPage() {
         </motion.div>
       ) : error ? (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ scale: 0.95 }}
+          animate={{ scale: 1 }}
         >
           <Card className="rounded-3xl border-red-200 bg-red-50/50 shadow-sm">
             <CardContent className="p-8 text-center">
@@ -304,8 +300,8 @@ export default function LibraryPage() {
         </motion.div>
       ) : records.length === 0 ? (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ scale: 0.95 }}
+          animate={{ scale: 1 }}
         >
           <Card className="rounded-3xl border-black/5 bg-white/80 shadow-sm">
             <CardContent className="p-8 text-center">
@@ -328,8 +324,6 @@ export default function LibraryPage() {
         </motion.div>
       ) : filtered.length === 0 ? (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
         >
           <Card className="rounded-3xl border-black/5 bg-white/80 shadow-sm">
             <CardContent className="p-8 text-center">
