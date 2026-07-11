@@ -33,9 +33,8 @@ const TypeIcon = ({ type }: { type: RecordItem["type"] }) => {
 
 // Animation variants
 const containerVariants = {
-  hidden: { opacity: 0 },
+  hidden: {},
   visible: {
-    opacity: 1,
     transition: {
       staggerChildren: 0.06,
       delayChildren: 0.2,
@@ -44,9 +43,8 @@ const containerVariants = {
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 24, scale: 0.96 },
+  hidden: { y: 24, scale: 0.96 },
   visible: {
-    opacity: 1,
     y: 0,
     scale: 1,
     transition: {
@@ -57,18 +55,16 @@ const cardVariants = {
 };
 
 const headerVariants = {
-  hidden: { opacity: 0, y: -10 },
+  hidden: { y: -10 },
   visible: {
-    opacity: 1,
     y: 0,
     transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] as const },
   },
 };
 
 const footerVariants = {
-  hidden: { opacity: 0 },
+  hidden: {},
   visible: {
-    opacity: 1,
     transition: { delay: 0.6, duration: 0.4, ease: [0.4, 0, 0.2, 1] as const },
   },
 };
