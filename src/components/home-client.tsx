@@ -103,7 +103,7 @@ export default function HomeClient({ records }: HomeClientProps) {
       </motion.header>
 
       {records.length > 0 ? (
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-3 space-y-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {records.map((item) => {
             const progress = resolveProgress(item);
             return (
@@ -115,10 +115,10 @@ export default function HomeClient({ records }: HomeClientProps) {
                 <Link
                   href={`/items/${item.id}`}
                   aria-label={item.title}
-                  className="block group break-inside-avoid"
+                  className="block h-full group"
                 >
                   <motion.article
-                    className="spotlight-card bg-white p-3 border border-black/5 rounded-xl mb-3 cursor-pointer overflow-hidden"
+                    className="spotlight-card flex h-full flex-col bg-white p-3 border border-black/5 rounded-xl cursor-pointer overflow-hidden"
                     whileHover={{
                       y: -4,
                       boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
