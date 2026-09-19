@@ -8,6 +8,8 @@ import { getNeoDBToken } from "@/lib/neodb-token";
 
 export const runtime = "nodejs";
 
+const mediaTypes: MediaType[] = ["book", "film", "series", "game"];
+
 export async function GET() {
   const records = await getAllRecords();
   return NextResponse.json({ records });
@@ -39,9 +41,23 @@ export async function POST(request: Request) {
     sourceIds?: Record<string, string>;
   };
 
-  if (!body?.title) {
+  if (!body?.title?.trim()) {
     return NextResponse.json(
       { error: "标题不能为空" },
+      { status: 400 }
+    );
+  }
+
+  if (!mediaTypes.includes(body.type)) {
+    return NextResponse.json(
+      { error: "类型不正确" },
+      { status: 400 }
+    );
+  }
+
+  if (body.year !== undefined && !Number.isInteger(body.year)) {
+    return NextResponse.json(
+      { error: "年份不正确" },
       { status: 400 }
     );
   }
@@ -55,9 +71,11 @@ export async function POST(request: Request) {
 
   try {
     // Create local record first
-    const { startedAt, completedAt, sourceIds, ...rest } = body;
+    const { sourceIds, ...rest } = body;
     const record = await createRecord({
       ...rest,
+      title: rest.title.trim(),
+      summary: rest.summary?.trim() || "手动添加的记录",
       sourceIds,
       notes: rest.notes?.trim() || undefined,
     });

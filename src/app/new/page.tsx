@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { safeCssUrl } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import type { RecordStatus } from "@/lib/data";
+import type { MediaType, RecordStatus } from "@/lib/data";
 import { statusLabels } from "@/lib/labels";
 import StarRating from "@/components/star-rating";
 import { useAdminFetch } from "@/components/admin-auth-provider";
@@ -11,7 +11,7 @@ import { useAdminFetch } from "@/components/admin-auth-provider";
 interface SearchItem {
   sources: string[];
   sourceIds: Record<string, string>;
-  type: "book" | "film" | "series" | "game" | "movie" | "tv";
+  type: MediaType;
   title: string;
   originalTitle?: string;
   year?: number;
@@ -20,10 +20,17 @@ interface SearchItem {
 }
 
 const statusOptions: RecordStatus[] = ["planned", "in_progress", "completed", "paused"];
+const mediaTypeOptions: { value: MediaType; label: string }[] = [
+  { value: "book", label: "书籍" },
+  { value: "film", label: "电影" },
+  { value: "series", label: "剧集" },
+  { value: "game", label: "游戏" },
+];
 
 export default function NewRecordPage() {
   const router = useRouter();
   const adminFetch = useAdminFetch();
+  const [entryMode, setEntryMode] = useState<"search" | "manual">("search");
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
@@ -33,6 +40,11 @@ export default function NewRecordPage() {
 
   const [form, setForm] = useState({
     title: "",
+    type: "book" as MediaType,
+    originalTitle: "",
+    year: "",
+    summary: "",
+    coverUrl: "",
     status: "planned" as RecordStatus,
     rating: 0,
     notes: "",
@@ -48,6 +60,18 @@ export default function NewRecordPage() {
     status: form.status,
     rating: form.rating > 0 ? form.rating : undefined,
     sourceIds: item.sourceIds,
+    notes: form.notes.trim() || undefined,
+  });
+
+  const payloadFromManualForm = () => ({
+    type: form.type,
+    title: form.title.trim(),
+    originalTitle: form.originalTitle.trim() || undefined,
+    year: form.year.trim() ? Number(form.year) : undefined,
+    summary: form.summary.trim() || "手动添加的记录",
+    coverUrl: form.coverUrl.trim() || undefined,
+    status: form.status,
+    rating: form.rating > 0 ? form.rating : undefined,
     notes: form.notes.trim() || undefined,
   });
 
@@ -83,8 +107,17 @@ export default function NewRecordPage() {
   };
 
   const handleSave = async () => {
+    if (entryMode === "manual" && !form.title.trim()) {
+      setSearchError("ERR: TITLE_REQUIRED");
+      return;
+    }
+    if (entryMode === "manual" && form.year.trim() && !Number.isInteger(Number(form.year))) {
+      setSearchError("ERR: INVALID_YEAR");
+      return;
+    }
+
     const target = selectedResult ?? searchResults[0];
-    if (!target) {
+    if (entryMode === "search" && !target) {
       setSearchError("ERR: NO_RESULT_SELECTED");
       return;
     }
@@ -96,7 +129,9 @@ export default function NewRecordPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payloadFromResult(target)),
+        body: JSON.stringify(
+          entryMode === "manual" ? payloadFromManualForm() : payloadFromResult(target as SearchItem)
+        ),
       });
       const data = (await response.json()) as {
         record?: { id: string };
@@ -129,13 +164,44 @@ export default function NewRecordPage() {
           <span className="text-[#7a756f] text-sm">add_record</span>
         </div>
         <p className="text-[#7a756f] text-sm font-[var(--font-mono)]">
-          mode: universal_search<span className="term-cursor" />
+          mode: {entryMode === "manual" ? "manual_entry" : "universal_search"}<span className="term-cursor" />
         </p>
       </header>
 
       <div className="space-y-4">
-        {/* Search Section */}
         <div className="term-card">
+          <h2 className="font-[var(--font-terminal)] text-[#1a1915] text-sm mb-4 flex items-center gap-2">
+            <span className="text-[#00a86b]">&gt;</span>
+            ENTRY_MODE
+          </h2>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setEntryMode("search");
+                setSearchError(null);
+              }}
+              className={`term-btn ${entryMode === "search" ? "border-[#00a86b] bg-[#00a86b]/10" : ""}`}
+            >
+              <span>SEARCH</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEntryMode("manual");
+                setSearchError(null);
+              }}
+              className={`term-btn ${entryMode === "manual" ? "border-[#00a86b] bg-[#00a86b]/10" : ""}`}
+            >
+              <span>MANUAL</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Search Section */}
+        {entryMode === "search" && (
+          <div className="term-card">
           <h2 className="font-[var(--font-terminal)] text-[#1a1915] text-sm mb-4 flex items-center gap-2">
             <span className="text-[#00a86b]">&gt;</span>
             SEARCH_QUERY
@@ -178,10 +244,11 @@ export default function NewRecordPage() {
               [{searchError}]
             </div>
           )}
-        </div>
+          </div>
+        )}
 
         {/* Search Results */}
-        {searchResults.length > 0 && (
+        {entryMode === "search" && searchResults.length > 0 && (
           <div className="term-card">
             <h2 className="font-[var(--font-terminal)] text-[#1a1915] text-sm mb-4 flex items-center gap-2">
               <span className="text-[#00a86b]">&gt;</span>
@@ -268,6 +335,108 @@ export default function NewRecordPage() {
           </div>
         )}
 
+        {entryMode === "manual" && (
+          <div className="term-card">
+            <h2 className="font-[var(--font-terminal)] text-[#1a1915] text-sm mb-4 flex items-center gap-2">
+              <span className="text-[#00a86b]">&gt;</span>
+              MANUAL_RECORD
+            </h2>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="manual-title" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+                  title=*
+                </label>
+                <input
+                  id="manual-title"
+                  value={form.title}
+                  onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+                  placeholder="记录名称"
+                  className="term-input w-full"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="manual-type" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+                  type=
+                </label>
+                <select
+                  id="manual-type"
+                  value={form.type}
+                  onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value as MediaType }))}
+                  className="term-select"
+                >
+                  {mediaTypeOptions.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="manual-original-title" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+                  original_title=
+                </label>
+                <input
+                  id="manual-original-title"
+                  value={form.originalTitle}
+                  onChange={(e) => setForm((prev) => ({ ...prev, originalTitle: e.target.value }))}
+                  placeholder="可选"
+                  className="term-input w-full"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="manual-year" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+                  year=
+                </label>
+                <input
+                  id="manual-year"
+                  value={form.year}
+                  onChange={(e) => setForm((prev) => ({ ...prev, year: e.target.value }))}
+                  inputMode="numeric"
+                  placeholder="可选，默认今年"
+                  className="term-input w-full"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label htmlFor="manual-summary" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+                summary=
+              </label>
+              <textarea
+                id="manual-summary"
+                value={form.summary}
+                onChange={(e) => setForm((prev) => ({ ...prev, summary: e.target.value }))}
+                placeholder="一句简介，可留空"
+                rows={3}
+                className="term-input w-full resize-none"
+              />
+            </div>
+
+            <div className="mt-4">
+              <label htmlFor="manual-cover-url" className="block text-xs text-[#6b6560] mb-2 font-[var(--font-mono)]">
+                cover_url=
+              </label>
+              <input
+                id="manual-cover-url"
+                value={form.coverUrl}
+                onChange={(e) => setForm((prev) => ({ ...prev, coverUrl: e.target.value }))}
+                placeholder="可选，图片 URL"
+                className="term-input w-full"
+              />
+            </div>
+
+            {searchError && (
+              <div className="mt-4 text-xs font-[var(--font-mono)] text-[#c53030]">
+                [{searchError}]
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Save Section */}
         <div className="term-card">
           <h2 className="font-[var(--font-terminal)] text-[#1a1915] text-sm mb-4 flex items-center gap-2">
@@ -331,7 +500,7 @@ export default function NewRecordPage() {
           {/* Save Button */}
           <button
             onClick={handleSave}
-            disabled={saving || searchResults.length === 0}
+            disabled={saving || (entryMode === "search" ? searchResults.length === 0 : !form.title.trim())}
             className="term-btn w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>{saving ? "[...] SAVING..." : "[>] SAVE_TO_DATABASE"}</span>
@@ -342,7 +511,7 @@ export default function NewRecordPage() {
       {/* Footer */}
       <footer className="mt-12 pt-6 border-t border-[#d4cfc5]">
         <div className="flex items-center justify-between text-xs text-[#7a756f] font-[var(--font-mono)]">
-          <span>results: {searchResults.length}</span>
+          <span>{entryMode === "manual" ? "source: local" : `results: ${searchResults.length}`}</span>
           <span>ready</span>
         </div>
       </footer>
